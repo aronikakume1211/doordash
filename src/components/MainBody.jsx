@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
-import {apiBase} from '../utility/constants';
+import React, { useEffect, useState } from 'react';
+import { apiBase } from '../utility/constants';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { GET_LOCATION } from '../redux/type';
+import _ from 'lodash'
 
 const MainBody = () => {
 
     const [search, setSearch] = useState('');
     const [Data, setData] = useState([]);
-    // const [loading, setLoading] = useState(true);
-    // const [error, setError] = useState(null);
     const [showFilter, setShowFilter] = useState(false);
+    const [menu, setMenu] = useState(null);
+    const [error, setError] = useState(null);
 
+    const dispatch = useDispatch()
 
+    
+   
     const handleChange = (event) => {
         setSearch(event.target.value);
+        const search = event.target.value;
+
         if (event.target.value.length > 2) {
             setShowFilter(true);
             fetchCity();
@@ -33,7 +41,6 @@ const MainBody = () => {
             // setError(error);
             // setLoading(false);
         }
-
 
     }
 

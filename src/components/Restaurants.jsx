@@ -9,24 +9,26 @@ function Restaurants() {
     let address_recommend = `${baseApi}/misc/address-recommend?place_id=${id}`;
 
     const [restaurants, setRestaurants] = useState([]);
-    const [cards, setCards] = useState([]);
+    const [cards, setCards] = useState(null);
     const [lat, setLat] = useState();
     const [lng, setLng] = useState();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(address_recommend);
-                const res = response.data;
+                await axios.get(address_recommend).then(response => response.data).then(res=>{
 
-                console.log('res', res);
-                console.log('data', res[0].geometry.location.lat);
-                console.log('data', res[0].geometry.location.lng);
+                    console.log('res', res.data[0]);
+                    console.log('data', res.data[0].geometry.location.lat);
+                    console.log('data', res.data[0].geometry.location.lng);
+    
+                    setLat(res.data[0].geometry.location.lat);
+                    setLng(res.data[0].geometry.location.lng);
+    
+                    fetchRestaurants();
+                });
+                // const res = response.data;
 
-                setLat(res[0].geometry.location.lat);
-                setLng(res[0].geometry.location.lng);
-
-                fetchRestaurants();
                 
             } catch (error) {
                 console.error('Error fetching address recommendations:', error);
@@ -43,9 +45,9 @@ function Restaurants() {
             await axios.get(restaurants_list_url)
                 .then(response => response.data)
                 .then(res => {
-                    console.log(res);
+                    console.log(typeof(res.data.cards));
                     setCards(res.data.cards);
-                    console.log(res.data.cards);
+                    // console.log(res.data.cards);
                 });
         } catch (error) {
             console.log('Error', error);
@@ -58,11 +60,10 @@ function Restaurants() {
             {
                 cards ? cards?.slice(1).map((item, index) => {
                     return (
-                        <>
+                        <div key={index}>
                             {index == 0 &&
                                 (
                                     <>
-
                                         <h2>{item.card?.card?.header?.title}</h2>
                                         <div key={index} className='card_container restaurant_items'>
 
@@ -77,7 +78,8 @@ function Restaurants() {
                                     </>
                                 )
                             }
-                        </>
+                        </div>
+
                     )
                 }) : null
             }
